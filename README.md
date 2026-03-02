@@ -245,3 +245,6 @@ Then from there it defined the errors through how the constructor was requesting
 
 And that is when I stopped requesting help. And once again I did not get any code from the AI, Just some elaboration on parameters and Enums. And with that I was able to solve the issues with no further prompts.
 
+## Notes
+
+I am going to use 2 late day coupons. 
