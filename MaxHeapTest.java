@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test;
  * This testing class contains a series of tests to validate the functionality of the MaxHeap class,
  * including checking if the heap is empty, inserting tasks and verifying the maximum task, 
  * extracting tasks in descending order, increasing task priority, and confirming the correct order of extraction.
- * These tests follow the suggested testing guide for MaxHeap.
+ * These tests follow the suggested testing guide for MaxHeap. The main difference is this testing class resorts to
+ * using a JUnit testing framework.
  * @author Austin Bartram
  */
 public class MaxHeapTest {
