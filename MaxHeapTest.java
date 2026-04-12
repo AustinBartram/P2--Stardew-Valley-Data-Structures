@@ -3,14 +3,8 @@ import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 /**
- * MaxHeap is a class that implements a max heap data structure to manage tasks based on their priority.
- * This testing class contains a series of tests to validate the functionality of the MaxHeap class,
- * including checking if the heap is empty, inserting tasks and verifying the maximum task, 
- * extracting tasks in descending order, increasing task priority, and confirming the correct order of extraction.
- * These tests follow the suggested testing guide for MaxHeap. The main difference is this testing class resorts to
- * using a JUnit testing framework.
+ * Tests for MaxHeap using a JUnit style. 
  * @author Austin Bartram
  */
 public class MaxHeapTest {
@@ -22,17 +16,17 @@ public class MaxHeapTest {
         heap = new MaxHeap();
     }
 
-    private Task task(int priority, int hourCreated) {
-        return new Task(priority, TaskInterface.TaskType.FARM_MAINTENANCE, "p=" + priority, hourCreated);
+    private Task makeTask(int priority, int hourCreated) {
+        return new Task(priority, Task.TaskType.FARM_MAINTENANCE, "Task " + priority, hourCreated);
     }
 
-    @test
-    void emptyTest() {
+    @Test
+    void testEmpty() {
         assertTrue(heap.isEmpty());
     }
 
     @Test
-    void insertTest() throws HeapException {
+    void testInsert() throws HeapException {
         heap.insert(new Task(3, Task.TaskType.FISHING, "Low", 0));
         heap.insert(new Task(7, Task.TaskType.MINING, "High", 1));
 
@@ -41,7 +35,7 @@ public class MaxHeapTest {
     }
 
     @Test
-    void extractTest() throws HeapException {
+    void testExtractMax() throws HeapException {
         heap.insert(new Task(2, Task.TaskType.FISHING, "A", 0));
         heap.insert(new Task(6, Task.TaskType.MINING, "B", 1));
         heap.insert(new Task(4, Task.TaskType.FARM_MAINTENANCE, "C", 2));
@@ -52,7 +46,7 @@ public class MaxHeapTest {
     }
 
     @Test
-    void increaseTest() throws HeapException {
+    void testIncreaseKey() throws HeapException {
         heap.insert(new Task(1, Task.TaskType.FISHING, "A", 0));
         heap.insert(new Task(5, Task.TaskType.MINING, "B", 1));
         heap.insert(new Task(3, Task.TaskType.FARM_MAINTENANCE, "C", 2));
@@ -63,93 +57,106 @@ public class MaxHeapTest {
     }
 
     @Test
-    void orderTest() throws HeapException {
+    void testOrder() throws HeapException {
         for (int i = 1; i <= 5; i++) {
-            heap.insert(new Task(i, Task.TaskType.FISHING, "T" + i, i));
+            heap.insert(new Task(i, Task.TaskType.FISHING, "Task " + i, i));
         }
 
-        int previous = Integer.MAX_VALUE;
+        int last = Integer.MAX_VALUE;
 
         while (!heap.isEmpty()) {
             int current = heap.extractMax().getPriority();
-            assertTrue(current <= previous);
-            previous = current;
+            assertTrue(current <= last);
+            last = current;
         }
     }
 
     @Test
-    void emptyExtractTest() {
-        assertThrows(Exception.class, () -> {
-            heap.extractMax();
-        });
+    void testEmptyExtract() {
+        assertThrows(Exception.class, () -> heap.extractMax());
     }
 
-    private boolean checkIfMaxHeap(Task[] arr) {
+    private boolean isHeap(Task[] arr) {
         for (int i = 0; i < arr.length; i++) {
-            int left = 2 * i + 1;
-            int right = 2 * i + 2;
+            int left = (2 * i) + 1;
+            int right = (2 * i) + 2;
 
-            if (left < arr.length && arr[i].compareTo(arr[left]) < 0) return false;
-            if (right < arr.length && arr[i].compareTo(arr[right]) < 0) return false;
+            if (left < arr.length && arr[i].compareTo(arr[left]) < 0) {
+                return false;
+            }
+
+            if (right < arr.length && arr[i].compareTo(arr[right]) < 0) {
+                return false;
+            }
         }
         return true;
     }
 
-    private boolean checkIfReverseSorted(int[] a) {
-        for (int i = 1; i < a.length; i++) {
-            if (a[i - 1] < a[i]) return false;
+    private boolean isSorted(int[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i - 1] < arr[i]) {
+                return false;
+            }
         }
         return true;
     }
 
     @Test
-    void insertAscending() throws HeapException {
-        int n = 25;
-        for (int i = 1; i <= n; i++) {
-            heap.insert(task(i, i));
+    void testAscendingInsert() throws HeapException {
+        int size = 25;
+
+        for (int i = 1; i <= size; i++) {
+            heap.insert(makeTask(i, i));
         }
 
-        assertTrue(checkIfMaxHeap(heap.getHeap()));
+        assertTrue(isHeap(heap.getHeap()));
 
-        int[] extracted = new int[n];
-        for (int i = 0; i < n; i++) {
-            extracted[i] = heap.extractMax().getPriority();
+        int[] nums = new int[size];
+
+        for (int i = 0; i < size; i++) {
+            nums[i] = heap.extractMax().getPriority();
         }
-        assertTrue(checkIfReverseSorted(extracted));
+
+        assertTrue(isSorted(nums));
     }
 
     @Test
-    void insertDescending() throws HeapException {
-        int n = 25;
-        for (int i = n; i >= 1; i--) {
-            heap.insert(task(i, i));
+    void testDescendingInsert() throws HeapException {
+        int size = 25;
+
+        for (int i = size; i >= 1; i--) {
+            heap.insert(makeTask(i, i));
         }
 
-        assertTrue(checkIfMaxHeap(heap.getHeap()));
+        assertTrue(isHeap(heap.getHeap()));
 
-        int[] extracted = new int[n];
-        for (int i = 0; i < n; i++) {
-            extracted[i] = heap.extractMax().getPriority();
+        int[] nums = new int[size];
+
+        for (int i = 0; i < size; i++) {
+            nums[i] = heap.extractMax().getPriority();
         }
-        assertTrue(checkIfReverseSorted(extracted));
+
+        assertTrue(isSorted(nums));
     }
 
     @Test
-    void insertRandom() throws HeapException {
-        int n = 25;
-        Random r = new Random(12345);
+    void testRandomInsert() throws HeapException {
+        int size = 25;
+        Random rand = new Random();
 
-        for (int i = 0; i < n; i++) {
-            int p = 1 + r.nextInt(n);
-            heap.insert(task(p, i));
+        for (int i = 0; i < size; i++) {
+            int num = rand.nextInt(25) + 1;
+            heap.insert(makeTask(num, i));
         }
 
-        assertTrue(checkIfMaxHeap(heap.getHeap()));
+        assertTrue(isHeap(heap.getHeap()));
 
-        int[] extracted = new int[n];
-        for (int i = 0; i < n; i++) {
-            extracted[i] = heap.extractMax().getPriority();
+        int[] nums = new int[size];
+
+        for (int i = 0; i < size; i++) {
+            nums[i] = heap.extractMax().getPriority();
         }
-        assertTrue(checkIfReverseSorted(extracted));
+
+        assertTrue(isSorted(nums));
     }
 }
